@@ -53,6 +53,7 @@ Minimalist online banking app, made as a part of the [Jonas Smedtmann's JavaScri
 
 1. [Intro](#1-intro)
 2. [Creating DOM elements](#2-creating-dom-elements)
+3. [Computing usernames](#3-computing-usernames)
 
 ---
 
@@ -198,9 +199,103 @@ Accepts 2 strings:
 
 <br>
 
-## 3.
+## 3. Computing usernames
 
 <br>
+
+`map()` and `forEach()` for computing user names for each account owner in the app
+<br><br>
+
+**We will create a side-efect.**
+When we modify something, in JavaScript, we cause side effects. This simply means modifying or changing our code, causing it to have unpredictable behaviour and mutability.
+
+We will be producing a side-effect/are doing something to the account object. We won't return a new value.
+<br><br>
+
+**username** = initials of each of the users
+<br>
+
+`" "` = space
+
+`""` = empty string
+<br><br>
+
+**Steps:**
+<br>
+
+1. transform the string to lowercase: `toLowerCase()`
+
+2. to take only 1st letters of each word, split string into multiple words with `split(" ")`, dividing by spaces
+
+3. loop over the array with `map()`, take only first letter and join the strings with `join("")` with empty string
+   <br><br>
+
+```js
+const user = 'Steven Thomas Williams'; // stw
+
+const username = user
+  .toLowerCase()
+  .split(' ')
+  .map(word => word[0])
+  .join('');
+console.log(username); // stw
+```
+
+<br><br>
+
+We'll make a function out of it:
+<br>
+
+```js
+const createUsernames = function (user) {
+  const username = user
+    .toLowerCase()
+    .split(' ')
+    .map(word => word[0])
+    .join('');
+
+  console.log(username);
+};
+createUsernames('Jonas Schmedtmann'); //js
+```
+
+<br><br>
+
+_Compute 1 username for each of account holders in the accounts array._
+<br>
+
+    const accounts = [account1, account2, account3, account4];
+
+<br><br>
+
+We do not want to create a new array (no `map()`), we want to modify the existing elements in accounts array >> `forEach()`
+<br>
+
+- receive all the accounts (array of accounts)
+
+- create a new property on all objects: `username`
+  <br><br>
+
+```js
+const createUsernames = function (accs) {
+  // side-effects: mutating original array
+  accs.forEach(function (acc) {
+    acc.username = acc.owner // new property on objects
+      .toLowerCase()
+      .split(' ')
+      .map(word => word[0])
+      .join('');
+  });
+};
+
+createUsernames(accounts);
+```
+
+<br><br>
+
+**We don't return anything, we are producing a side-effect/are doing something to the `account` object.**
+
+We don't use arrow function because we are not creating a value to be returned.
 
 <br><br>
 

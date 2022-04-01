@@ -61,7 +61,7 @@ const inputClosePin = document.querySelector('.form__input--pin');
 
 // movements: [200, 450, -400, 3000, -650, -130, 70, 1300]
 
-// display of movements
+// ---------------------------------------- display movements
 const displayMovements = function (movements) {
   // empty the container to add new elements
   containerMovements.innerHTML = '';
@@ -88,3 +88,40 @@ const displayMovements = function (movements) {
 displayMovements(account1.movements);
 
 // console.log(containerMovements.innerHTML); // displays complete HTML
+
+// ---------------------------------------- calculate balance
+// ---------------------------------------- display balance
+// calculating current balance
+// printing current balance to the "label balance" ("balance__value")
+
+const calcDisplayBalance = function (movements) {
+  const balance = movements.reduce((acc, mov) => acc + mov, 0);
+
+  labelBalance.textContent = `${balance}€`;
+};
+
+calcDisplayBalance(account1.movements);
+
+// const account1 = {
+//   owner: 'Jonas Schmedtmann',
+//   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
+//   interestRate: 1.2, // %
+//   pin: 1111,
+// };
+
+// ---------------------------------------- computing usernames
+// creating a new property on account objects: "username"
+
+const createUsernames = function (accs) {
+  // side-effects: mutating original array
+  accs.forEach(function (acc) {
+    acc.username = acc.owner // new property on objects
+      .toLowerCase()
+      .split(' ')
+      .map(word => word[0])
+      .join('');
+  });
+};
+
+createUsernames(accounts);
+console.log(accounts);
