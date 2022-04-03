@@ -77,7 +77,7 @@ const displayMovements = function (movements) {
           class="movements__type movements__type--${depositType}">
           ${i + 1} ${depositType}
         </div>
-        <div class="movements__value">${mov}</div>
+        <div class="movements__value">${mov}€</div>
   <   /div>`;
 
     // attach HTML template to movements element
@@ -110,6 +110,7 @@ calcDisplayBalance(account1.movements);
 // };
 
 // ---------------------------------------- computing usernames
+
 // creating a new property on account objects: "username"
 
 const createUsernames = function (accs) {
@@ -125,3 +126,41 @@ const createUsernames = function (accs) {
 
 createUsernames(accounts);
 console.log(accounts);
+
+// ---- chaining methods
+// ---------------------------------------- CALCULATING STATISTICS
+// ---------------------------------------- calculate summary
+// ---------------------------------------- display summary
+
+// IN = income = all deposits
+// OUT = outcome = all withdrawals
+// interest
+
+const calcDisplaySummary = function (movements) {
+  // in = labelSumIn
+  const income = movements
+    .filter(mov => mov > 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  // put it inside HTML element: .summary__value--interest = labelSumIn
+  labelSumIn.textContent = `${income}€`;
+
+  // out = labelSumOut
+  const outcome = movements
+    .filter(mov => (mov < 0 ? true : false))
+    .reduce((acc, mov) => acc + mov, 0);
+  labelSumOut.textContent = `${Math.abs(outcome)}€`;
+
+  // interest = labelSumInterest
+  // 1.2% of deposited amount, added with each deposit (1.2/100 = 0.012)
+  const interest = movements
+    .filter(deposit => deposit > 0)
+    .map(deposit => deposit * 0.012)
+    // bank will pay interest if it is >= 1€
+    .filter(interest => interest >= 1)
+    .reduce((acc, interest) => acc + interest, 0);
+  labelSumInterest.textContent = `${interest}€`;
+};
+
+calcDisplaySummary(account1.movements);
+
+// bank will pay interest if it is >= 1€
