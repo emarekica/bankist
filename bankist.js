@@ -62,6 +62,8 @@ const inputClosePin = document.querySelector('.form__input--pin');
 // movements: [200, 450, -400, 3000, -650, -130, 70, 1300]
 
 // ---------------------------------------- display movements
+
+//// function called later in event handler
 const displayMovements = function (movements) {
   // empty the container to add new elements
   containerMovements.innerHTML = '';
@@ -85,8 +87,6 @@ const displayMovements = function (movements) {
   });
 };
 
-displayMovements(account1.movements);
-
 // console.log(containerMovements.innerHTML); // displays complete HTML
 
 // ---------------------------------------- calculate balance
@@ -94,13 +94,12 @@ displayMovements(account1.movements);
 // calculating current balance
 // printing current balance to the "label balance" ("balance__value")
 
+//// function called later in event handler
 const calcDisplayBalance = function (movements) {
   const balance = movements.reduce((acc, mov) => acc + mov, 0);
 
   labelBalance.textContent = `${balance}€`;
 };
-
-calcDisplayBalance(account1.movements);
 
 // const account1 = {
 //   owner: 'Jonas Schmedtmann',
@@ -128,7 +127,7 @@ createUsernames(accounts);
 console.log(accounts);
 
 // ---- chaining methods
-// ---------------------------------------- CALCULATING STATISTICS
+// ---------------------------------------- STATISTICS
 // ---------------------------------------- calculate summary
 // ---------------------------------------- display summary
 
@@ -136,6 +135,7 @@ console.log(accounts);
 // OUT = outcome = all withdrawals
 // interest
 
+//// function called later in event handler
 const calcDisplaySummary = function (movements) {
   // in = labelSumIn
   const income = movements
@@ -161,6 +161,70 @@ const calcDisplaySummary = function (movements) {
   labelSumInterest.textContent = `${interest}€`;
 };
 
-calcDisplaySummary(account1.movements);
-
 // bank will pay interest if it is >= 1€
+
+// // ---------------------------------------- IMPLEMENTING LOGIN
+
+console.log(accounts);
+
+// selecting accounts by name
+const account = accounts.find(acc => acc.owner === 'Jessica Davis');
+console.log(account);
+
+for (let acc of accounts) {
+  if (acc.owner === 'Jessica Davis') {
+    acc = account2;
+  }
+}
+
+console.log(account2);
+
+// --- event listeners on login button: login__btn = btnLogin
+// --- username: login__input--user = inputLoginUsername
+// --- pin: login__input--pin = inputLoginPin
+
+// ------------------------------------------- event handlers
+
+let currentAccount;
+
+// e = event
+
+btnLogin.addEventListener('click', function (e) {
+  // prevents form from submitting
+  e.preventDefault();
+
+  // find account with user name that user inputed
+  currentAccount = accounts.find(
+    acc => acc.username === inputLoginUsername.value
+  );
+
+  // check if PIN is correct
+  // optional chaining used to check if currentAccount exists
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    // ---- if PIN is correct, do this:
+
+    // 1: Display UI and "welcome" msg
+    // .welcome; "Login to get started" = labelWelcome
+    labelWelcome.textContent = `Welcome back, ${
+      currentAccount.owner.split(' ')[0]
+    }`;
+
+    // Clear input fields
+    inputLoginUsername.value = inputLoginPin.value = '';
+    ž;
+    //remove the fous (cursor) from a field
+    inputLoginPin = inputLoginPin(blurr);
+
+    // .app contains opacity to change visibility = containerApp
+    containerApp.style.opacity = 100;
+
+    // 2: Display movements
+    displayMovements(currentAccount.movements);
+
+    // 3: Display balance
+    calcDisplayBalance(currentAccount.movements);
+
+    // 4: Display summary
+    calcDisplaySummary(currentAccount.movements);
+  }
+});
