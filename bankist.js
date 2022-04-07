@@ -136,25 +136,25 @@ console.log(accounts);
 // interest
 
 //// function called later in event handler
-const calcDisplaySummary = function (movements) {
+const calcDisplaySummary = function (account) {
   // in = labelSumIn
-  const income = movements
+  const income = account.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
   // put it inside HTML element: .summary__value--interest = labelSumIn
   labelSumIn.textContent = `${income}€`;
 
   // out = labelSumOut
-  const outcome = movements
+  const outcome = account.movements
     .filter(mov => (mov < 0 ? true : false))
     .reduce((acc, mov) => acc + mov, 0);
   labelSumOut.textContent = `${Math.abs(outcome)}€`;
 
   // interest = labelSumInterest
   // 1.2% of deposited amount, added with each deposit (1.2/100 = 0.012)
-  const interest = movements
+  const interest = account.movements
     .filter(deposit => deposit > 0)
-    .map(deposit => deposit * 0.012)
+    .map(deposit => deposit * account.interestRate)
     // bank will pay interest if it is >= 1€
     .filter(interest => interest >= 1)
     .reduce((acc, interest) => acc + interest, 0);
@@ -211,9 +211,9 @@ btnLogin.addEventListener('click', function (e) {
 
     // Clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
-    ž;
-    //remove the fous (cursor) from a field
-    inputLoginPin = inputLoginPin(blurr);
+
+    // remove the focus (cursor) from input field
+    inputLoginPin.blur();
 
     // .app contains opacity to change visibility = containerApp
     containerApp.style.opacity = 100;
@@ -225,6 +225,19 @@ btnLogin.addEventListener('click', function (e) {
     calcDisplayBalance(currentAccount.movements);
 
     // 4: Display summary
-    calcDisplaySummary(currentAccount.movements);
+    calcDisplaySummary(currentAccount);
   }
+});
+
+// // ---------------------------------------- IMPLEMENTING TRANSFERS
+
+// --- event listener >> form-btn = btnTransfer
+// --- "transfer to" = form__input--to = inputTransferTo
+// --- "amount" = form__input--amount = inputTransferAmount
+
+btnTransfer.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  // input data
+  const amount = Number(inputTransferAmount.value);
 });

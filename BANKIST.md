@@ -54,6 +54,9 @@ Minimalist online banking app, made as a part of the [Jonas Smedtmann's JavaScri
 1. [Intro](#1-intro)
 2. [Creating DOM elements](#2-creating-dom-elements)
 3. [Computing usernames](#3-computing-usernames)
+4. [Implementing Login](#4-implementing-login)
+
+<br><br>
 
 ---
 
@@ -302,5 +305,162 @@ We don't use arrow function because we are not creating a value to be returned.
 ---
 
 <br>
+
+## 4. Implementing Login
+
+<br>
+
+When a `button` is in `form` element, the HTML default behaviour is to **reload when that kind of button is clicked.**
+<br><br>
+
+To stop that from happening, do this:
+<br>
+
+```js
+btnLogin.addEventListener('click', function (e) {
+  // prevents form from submitting
+  e.preventDefault();
+
+  console.log('Login');
+});
+```
+
+<br><br>
+
+Whenever there is `input` field + we hit `enter`, it will automatically trigger `click` event on submit button.
+
+<br><br>
+
+`preventDefault()` method
+<br><br>
+
+The `preventDefault()` method tells the user agent that if the event does not get explicitly handled, its default action should not be taken as it normally would be.
+
+The event continues to propagate as usual, unless one of its event listeners calls `stopPropagation()` or `stopImmediatePropagation()`, either of which terminates propagation at once.
+
+Calling `preventDefault()` for a non-cancelable event, without specifying `cancelable: true` has no effect.
+<br><br>
+
+**Syntax**: `event.preventDefault();`
+<br><br>
+
+**Examples**:
+<br><br>
+
+- [Blocking default click handling](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault#blocking_default_click_handling)
+
+- [Stopping keystrokes from reaching an edit field](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault#stopping_keystrokes_from_reaching_an_edit_field)
+
+<br><br>
+
+To login an user, we need to find the account with the user name that the user inputed. >> `find()`.
+<br><br>
+
+1.  select the element + read its value: `inputLoginUsername.value`
+
+2.  save it to a variable defined outside of the event listener function because **we will need the information about current account in other functions**
+    <br><br>
+
+```js
+let currentAccount;
+
+btnLogin.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  // find account with user name that user inputed
+  currentAccount = accounts.find(acc => acc.owner === inputLoginUsername.value);
+});
+```
+
+<br><br>
+
+3. check if pin is correct.
+   <br><br>
+
+Convert `.value` to `Number()` because it will otherwise always be a string.
+
+Also, check if the currentAccount exists. There are 2 ways:
+<br>
+
+a) `currentAccount && currentAccount.pin === Number(inputLoginPin.value)`
+
+b) `currentAccount?.pin === Number(inputLoginPin.value)` (optional chaining)
+<br><br>
+
+Displaying only the first name of the user: `currentAccount.owner.split(" ")[0]`
+
+<br><br>
+
+**IF THE PIN IS CORRECT...**
+<br><br>
+
+```js
+if (currentAccount?.pin === Number(inputLoginPin.value)) {
+  // code
+}
+```
+
+<br><br>
+
+**1. Display UI and "welcome" msg**
+<br><br>
+
+```js
+// .welcome; "Login to get started" = labelWelcome
+labelWelcome.textContent = `Welcome back, ${
+  currentAccount.owner.split(' ')[0]
+}`;
+
+// .app contains opacity to change visibility = containerApp
+containerApp.style.opacity = 100;
+```
+
+<br><br>
+
+**1.b Clear input fields**
+<br><br>
+
+    inputLoginUsername.value = inputLoginPin.value = '';
+
+<br><br>
+
+**2. Display movements**
+<br><br>
+
+Remove from the beginning and put it inside of the event handler.
+<br>
+
+    displayMovements(currentAccount.movements);
+
+<br><br>
+
+**3. Display balance**
+<br><br>
+
+    calcDisplayBalance(currentAccount.movements);
+
+<br><br>
+
+**4. Display summary**
+<br><br>
+
+    calcDisplaySummary(currentAccount.movements);
+
+<br><br>
+
+`blur()` function removes focus from a(n input) field.
+
+<br><br>
+
+**Changing interest rate for each account**
+<br><br>
+
+- we want to use the interest rate dynamically, depending on the current user
+
+`calcDisplaySummary()` modification: instead of movements as parameter, we need account
+
+<br><br>
+
+---
 
 ##
