@@ -95,8 +95,11 @@ const displayMovements = function (movements) {
 // printing current balance to the "label balance" ("balance__value")
 
 //// function called later in event handler
-const calcDisplayBalance = function (movements) {
-  const balance = movements.reduce((acc, mov) => acc + mov, 0);
+const calcDisplayBalance = function (account) {
+  const balance = account.movements.reduce((acc, mov) => acc + mov, 0);
+
+  // store the balance value into the account object
+  account.balance = balance;
 
   labelBalance.textContent = `${balance}€`;
 };
@@ -124,7 +127,18 @@ const createUsernames = function (accs) {
 };
 
 createUsernames(accounts);
-console.log(accounts);
+
+// uses currentAccount, here named "acc"
+const updateUI = function (acc) {
+  // Display movements
+  displayMovements(acc.movements);
+
+  // Display balance
+  calcDisplayBalance(acc);
+
+  // Display summary
+  calcDisplaySummary(acc);
+};
 
 // ---- chaining methods
 // ---------------------------------------- STATISTICS
@@ -163,7 +177,7 @@ const calcDisplaySummary = function (account) {
 
 // bank will pay interest if it is >= 1€
 
-// // ---------------------------------------- IMPLEMENTING LOGIN
+// // -----------------------------------------------------------
 
 console.log(accounts);
 
@@ -179,7 +193,9 @@ for (let acc of accounts) {
 
 console.log(account2);
 
-// --- event listeners on login button: login__btn = btnLogin
+// // ---------------------------------------- IMPLEMENTING LOGIN
+
+// --- event listener >> login__btn = btnLogin
 // --- username: login__input--user = inputLoginUsername
 // --- pin: login__input--pin = inputLoginPin
 
@@ -218,14 +234,8 @@ btnLogin.addEventListener('click', function (e) {
     // .app contains opacity to change visibility = containerApp
     containerApp.style.opacity = 100;
 
-    // 2: Display movements
-    displayMovements(currentAccount.movements);
-
-    // 3: Display balance
-    calcDisplayBalance(currentAccount.movements);
-
-    // 4: Display summary
-    calcDisplaySummary(currentAccount);
+    // update UI (summary and balance)
+    updateUI(currentAccount);
   }
 });
 
@@ -239,5 +249,66 @@ btnTransfer.addEventListener('click', function (e) {
   e.preventDefault();
 
   // input data
+  // use it to find account object to which to transfer
+  const receiverAccount = accounts.find(
+    acc => acc.username === inputTransferTo.value
+  );
   const amount = Number(inputTransferAmount.value);
+
+  // clean Transfer input fields
+  inputTransferAmount.value = inputTransferTo.value = '';
+
+  // if amount is a positive number
+  // if receiver account exists
+  // if current user has enough money (at least as the amount he wants to transfer)
+  // if we can transfer the money to our account
+
+  if (
+    amount > 0 &&
+    receiverAccount &&
+    currentAccount.balance >= amount &&
+    receiverAccount.username !== currentAccount.username
+  ) {
+    // add negative movement to current user (withdrawal)
+    currentAccount.movements.push(-amount);
+
+    // add positive movement to recipient (deposit)
+    receiverAccount.movements.push(amount);
+
+    // update UI (summary and balance)
+    updateUI(currentAccount);
+  }
+});
+
+// // ---------------------------------------- DELETING ACCOUNT
+
+// --- event listener >> form__btn--close = btnClose
+// --- "confirm user": .form__input--user = inputCloseUsername
+// --- "confirm PIN": .form__input--pin = inputClosePin
+
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  // check if credentials are correct
+  if (
+    inputCloseUsername.value === currentAccount.username &&
+    inputClosePin.value &&
+    Number(inputClosePin.value) === currentAccount.pin
+  ) {
+    // delete user from data
+    const index = accounts.findIndex(
+      acc => acc.username === currentAccount.username
+    );
+
+    // start, deleteCount
+    accounts.splice(index, 1);
+
+    // logout user = hide UI
+    containerApp.style.opacity = 0;
+
+    // logout timer expires
+  }
+
+  // clear input fields >> you won't be able to login anymore
+  inputCloseUsername.value = inputClosePin.value = '';
 });

@@ -55,6 +55,8 @@ Minimalist online banking app, made as a part of the [Jonas Smedtmann's JavaScri
 2. [Creating DOM elements](#2-creating-dom-elements)
 3. [Computing usernames](#3-computing-usernames)
 4. [Implementing Login](#4-implementing-login)
+5. [Implementing Transfer](#5-implementing-transfer)
+6. [Deleting account](#6-deleting-account)
 
 <br><br>
 
@@ -463,4 +465,271 @@ Remove from the beginning and put it inside of the event handler.
 
 ---
 
-##
+## 5. Implementing transfer
+
+<br>
+
+common practice with forms: `event.preventDefault()`
+<br><br>
+
+Look for the account which is equal to the inputed `username`, then select it with `find()`.
+<br><br>
+
+```js
+const receiverAccount = accounts.find(
+  acc => acc.username === inputTransferTo.value
+);
+```
+
+<br><br>
+
+**Steps:**
+<br><br>
+
+- check if the amount is positive number
+
+- check if current user has enough money
+
+- check if the receiver account exists
+
+- check if the receiver can transfer the money to its account
+  <br><br>
+
+```js
+if (
+  amount > 0 &&
+  receiverAccount &&
+  currentAccount.balance >= amount &&
+  receiverAccount.username !== currentAccount.username) {...}
+```
+
+<br><br>
+
+- add negative movement to current user (withdrawal)
+
+- add positive movement to recipient (deposit)
+  <br><br>
+
+```js
+// add negative movement to current user (withdrawal)
+currentAccount.movements.push(-amount);
+
+// add positive movement to recipient (deposit)
+receiverAccount.movements.push(amount);
+```
+
+<br><br>
+
+- update UI (summary and balance)
+  <br><br>
+
+```js
+const updateUI = function (acc) {
+  // Display movements
+  displayMovements(acc.movements);
+
+  // Display balance
+  calcDisplayBalance(acc);
+
+  // Display summary
+  calcDisplaySummary(acc);
+};
+```
+
+<br><br>
+
+`balance` value is not stored anywhere!
+
+In `calcDisplayBalance()`, make sure the function saves it in the `account`.
+<br>
+
+Current user needs to have enough money for the transfer:
+<br>
+
+    currentAccount.balance  >= amount
+
+<br><br>
+
+In `calcDisplayBalance()`, make sure the function saves it in the `account`.
+<br><br>
+
+1. Change parameters from `movements` to `account` and read the property of `movements`.
+   <br><br>
+
+From this:
+<br>
+
+```js
+const calcDisplayBalance = function (movements) {
+  const balance = movements.reduce((acc, mov) => acc + mov, 0);
+
+  labelBalance.textContent = `${balance}€`;
+};
+```
+
+<br>
+
+To this:
+<br><br>
+
+```js
+const calcDisplayBalance = function (account) {
+  const balance = account.movements.reduce((acc, mov) => acc + mov, 0);
+
+  labelBalance.textContent = `${balance}€`;
+};
+```
+
+<br><br>
+
+Store the balance into the account: `account.balance = balance`
+<br><br>
+
+```js
+const calcDisplayBalance = function (account) {
+  const balance = account.movements.reduce((acc, mov) => acc + mov, 0);
+
+  // store the balance value into the account object
+  account.balance = balance;
+
+  labelBalance.textContent = `${balance}€`;
+};
+```
+
+<br><br>
+
+We can set properties on objects that we receive and it will set it on the objects we had from the start because all references point to same objects in memory heap.
+<br><br>
+
+When we access `account1` object, it is not really a copy of the object itself, but a variable that points to the original object in the memory heap.
+<br><br>
+
+```js
+currentAccount = accounts.find(
+  acc => acc.username === inputLoginUsername.value
+);
+```
+
+<br><br>
+
+`currentAccount` is exactly one of objects from `accounts` array. They are all the same object, they only have a different name.
+
+The same object can be called `account1`, `currentAccount`, `acc` etc, but those are only **pointers to the same object in the memory heap**.
+<br><br>
+
+Therefore, **setting the property to that object is the same as setting it where we first defined the objects**.
+
+<br><br>
+
+We made a function `updateUI(`) and used it in _Login implementation_ and _Transfer implementation_.
+<br><br>
+
+```js
+// uses currentAccount, here named "acc"
+const updateUI = function (acc) {
+  createUsernames(accounts);
+
+  // Display movements
+  displayMovements(acc.movements);
+
+  // Display balance
+  calcDisplayBalance(acc);
+
+  // Display summary
+  calcDisplaySummary(acc);
+};
+```
+
+<br><br>
+
+At the end, **clean Transfer input fields**.
+
+It will be done no matter if the transfer is or is not successful.
+<br><br>
+
+    inputTransferAmount.value = inputTransferTo.value = '';
+
+<br><br>
+
+---
+
+## 6. Deleting account
+
+<br>
+
+**Use case for** `findIndex()`
+
+<br>
+
+Bankist app >> **Close Account feature**
+<br><br>
+
+**closing account = deleting that object from accounts array**
+<br><b>r
+
+1. find the desired element in an array >> `indexOf()` (provides the i of the element)
+
+2. delete the element from an array >> `splice()` (takes the i of the element)
+
+<br><br>
+
+**Input field automatically creates a string.**
+You need to convert it to number for comparison.
+<br><br>
+
+```js
+if (
+  // if input value is same as current user name
+  inputCloseUsername.value === currentAccount.username &&
+  // if input pin number is the same as current username pin
+  inputClosePin.value &&
+  Number(inputClosePin.value) === currentAccount.pin
+) {
+  // delete user from data
+  // log user out, hide UI
+  // logout timer expires
+}
+```
+
+<br><br>
+
+`splice()` mutates the original array, no need to store results.
+
+<br><br>
+
+`findIndex()` VS `indexOf()`
+<br><br>
+
+`findIndex()` takes a callback that loops over the array and at each iteration checks the condition.
+<br><br>
+
+    const index = accounts.findIndex(
+      acc => acc.username === currentAccount.username
+    );
+
+<br><br>
+
+It is similar to `indexOf()`. It also returns `i`, but it only searches for the value that is in the array.
+<br><br>
+
+    indexOf(23);
+    // true if the array contains 23
+    // false if the array doesn't contain 23
+
+<br><br>
+
+With `findIndex()` accepts complex condition that returns `true` / `false`.
+<br><br>
+
+---
+
+Both get access to current `i` and entire `arr`. (parameters: acc, i, arr).
+Not useful in practice.
+
+Both were added in ES6.
+
+<br><br>
+
+---
+
+## 7.
