@@ -59,9 +59,7 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-// movements: [200, 450, -400, 3000, -650, -130, 70, 1300]
-
-// ---------------------------------------- display movements
+//// ---------------------------------------- DISPLAY MOVEMENTS
 
 //// function called later in event handler
 const displayMovements = function (movements) {
@@ -79,8 +77,7 @@ const displayMovements = function (movements) {
           class="movements__type movements__type--${depositType}">
           ${i + 1} ${depositType}
         </div>
-        <div class="movements__value">${mov}€</div>
-  <   /div>`;
+        <div class="movements__value">${mov}€</div>`;
 
     // attach HTML template to movements element
     containerMovements.insertAdjacentHTML('afterbegin', html);
@@ -89,8 +86,8 @@ const displayMovements = function (movements) {
 
 // console.log(containerMovements.innerHTML); // displays complete HTML
 
-// ---------------------------------------- calculate balance
-// ---------------------------------------- display balance
+//// ---------------------------------------- CALCUALTE BALANCE
+//// ---------------------------------------- DISPLAY BALANCE
 // calculating current balance
 // printing current balance to the "label balance" ("balance__value")
 
@@ -111,7 +108,7 @@ const calcDisplayBalance = function (account) {
 //   pin: 1111,
 // };
 
-// ---------------------------------------- computing usernames
+//// ---------------------------------------- COMPUTING USERNAMES
 
 // creating a new property on account objects: "username"
 
@@ -177,7 +174,7 @@ const calcDisplaySummary = function (account) {
 
 // bank will pay interest if it is >= 1€
 
-// // -----------------------------------------------------------
+//// -----------------------------------------------------------
 
 console.log(accounts);
 
@@ -193,7 +190,7 @@ for (let acc of accounts) {
 
 console.log(account2);
 
-// // ---------------------------------------- IMPLEMENTING LOGIN
+//// ---------------------------------------- IMPLEMENTING LOGIN
 
 // --- event listener >> login__btn = btnLogin
 // --- username: login__input--user = inputLoginUsername
@@ -239,7 +236,7 @@ btnLogin.addEventListener('click', function (e) {
   }
 });
 
-// // ---------------------------------------- IMPLEMENTING TRANSFERS
+//// ---------------------------------------- IMPLEMENTING TRANSFERS
 
 // --- event listener >> form-btn = btnTransfer
 // --- "transfer to" = form__input--to = inputTransferTo
@@ -280,7 +277,34 @@ btnTransfer.addEventListener('click', function (e) {
   }
 });
 
-// // ---------------------------------------- DELETING ACCOUNT
+// ---- some()
+//// ---------------------------------------- REQUEST A LOAN
+
+// ---- event listener >> .form__btn--loan = btnLoan
+// ---- "amount" = form__input--loan-amount = inputLoanAmount
+
+// bank only grants a loan if there is at least one deposit with at least 10% of the requested loan amount
+
+btnLoan.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  // get the inputed/requested amount
+  const amount = Number(inputLoanAmount.value);
+
+  // any deposit > 10% of requested amount?
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
+    // add positive movement to the current user
+    currentAccount.movements.push(amount);
+
+    // update UI
+    updateUI(currentAccount);
+  }
+
+  // clear input field
+  inputLoanAmount.value = '';
+});
+
+//// ---------------------------------------- DELETING ACCOUNT
 
 // --- event listener >> form__btn--close = btnClose
 // --- "confirm user": .form__input--user = inputCloseUsername
@@ -305,10 +329,39 @@ btnClose.addEventListener('click', function (e) {
 
     // logout user = hide UI
     containerApp.style.opacity = 0;
-
-    // logout timer expires
   }
 
   // clear input fields >> you won't be able to login anymore
   inputCloseUsername.value = inputClosePin.value = '';
 });
+
+//// --------------------------- calculate overall movements of all accounts
+
+// take out deeply nested movements
+const allMovements = accounts.map(acc => acc.movements);
+console.log(allMovements);
+
+// put all in 1 arr
+const allAccMovements = allMovements.flat();
+console.log(allAccMovements);
+
+// sum them
+const overallBalance = allAccMovements.reduce((acc, mov) => acc + mov, 0);
+console.log(overallBalance); // 17840
+
+// chaining
+
+const overall = accounts
+  .map(acc => acc.movements)
+  .flat()
+  .reduce((acc, mov) => acc + mov, 0);
+
+console.log(overall); // 17840
+
+// flatMap() = map() + flat()
+
+const overall2 = accounts
+  .flatMap(acc => acc.movements)
+  .reduce((acc, mov) => acc + mov, 0);
+
+console.log(overall2); // 17840
