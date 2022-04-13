@@ -61,12 +61,19 @@ const inputClosePin = document.querySelector('.form__input--pin');
 
 //// ---------------------------------------- DISPLAY MOVEMENTS
 
+// ---- .movements = containerMovements
+
 //// function called later in event handler
-const displayMovements = function (movements) {
+//// adjusted to support sorting
+
+const displayMovements = function (movements, sort = false) {
   // empty the container to add new elements
   containerMovements.innerHTML = '';
 
-  movements.forEach(function (mov, i) {
+  // defined conditionally
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+
+  movs.forEach(function (mov, i) {
     // check if deposit or withdrawal
     const depositType = mov > 0 ? 'deposit' : 'withdrawal';
 
@@ -88,6 +95,7 @@ const displayMovements = function (movements) {
 
 //// ---------------------------------------- CALCUALTE BALANCE
 //// ---------------------------------------- DISPLAY BALANCE
+
 // calculating current balance
 // printing current balance to the "label balance" ("balance__value")
 
@@ -333,6 +341,22 @@ btnClose.addEventListener('click', function (e) {
 
   // clear input fields >> you won't be able to login anymore
   inputCloseUsername.value = inputClosePin.value = '';
+});
+
+//// ---------------------------------------- SORT BUTTON
+
+// ---- .btn--sort = btnSort
+
+// state variable
+let sorted = false;
+
+btnSort.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  displayMovements(currentAccount.movements, !sorted);
+
+  // flip the variable
+  sorted = !sorted;
 });
 
 //// --------------------------- calculate overall movements of all accounts
