@@ -359,7 +359,10 @@ btnSort.addEventListener('click', function (e) {
   sorted = !sorted;
 });
 
+////////////////////////////////////////////////////////////////////////////
+//
 //// --------------------------- calculate overall movements of all accounts
+//
 
 // take out deeply nested movements
 const allMovements = accounts.map(acc => acc.movements);
@@ -389,3 +392,37 @@ const overall2 = accounts
   .reduce((acc, mov) => acc + mov, 0);
 
 console.log(overall2); // 17840
+
+////////////////////////////////////////////////////////////////////////////
+//
+// ------------------------ selecting UI stored data and converting an array
+// ---- Array.from()
+
+// node >> array conversion
+
+labelBalance.addEventListener('click', function () {
+  // has 2 arguments
+  const movementsUI = Array.from(
+    document.querySelectorAll('.movements__value'),
+    domElement => Number(domElement.textContent.replace('€', ''))
+  );
+
+  // --- this is happening in the 2nd mapping argument
+  // convert to a number
+  // take € = textContent
+  // replace it with nothing = ""
+  // console.log(
+  //   movementsUI.map(domElement =>
+  //     Number(domElement.textContent.replace('€', ''))
+  //   )
+  // );
+
+  // another way of node >> array conversion
+  const movementsUI2 = [...document.querySelectorAll('.movements__value')];
+
+  console.log(
+    movementsUI2.map(domElement =>
+      Number(domElement.textContent.replace('€', ''))
+    )
+  );
+});
