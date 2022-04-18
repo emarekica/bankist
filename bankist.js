@@ -62,6 +62,7 @@ const inputClosePin = document.querySelector('.form__input--pin');
 //// ---------------------------------------- DISPLAY MOVEMENTS
 
 // ---- .movements = containerMovements
+// .movements__row
 
 //// function called later in event handler
 //// adjusted to support sorting
@@ -97,7 +98,7 @@ const displayMovements = function (movements, sort = false) {
 //// ---------------------------------------- DISPLAY BALANCE
 
 // calculating current balance
-// printing current balance to the "label balance" ("balance__value")
+// printing current balance to: .balance__value = "labelBalance"
 
 //// function called later in event handler
 const calcDisplayBalance = function (account) {
@@ -150,9 +151,9 @@ const updateUI = function (acc) {
 // ---------------------------------------- calculate summary
 // ---------------------------------------- display summary
 
-// IN = income = all deposits
-// OUT = outcome = all withdrawals
-// interest
+// IN = income = all deposits = .summary__value--in = "labelSumIn"
+// OUT = outcome = all withdrawals = .summary__value--out = "labelSumOut"
+// interests = .summary__value--interest = "labelSumInterest"
 
 //// function called later in event handler
 const calcDisplaySummary = function (account) {
@@ -246,7 +247,7 @@ btnLogin.addEventListener('click', function (e) {
 
 //// ---------------------------------------- IMPLEMENTING TRANSFERS
 
-// --- event listener >> form-btn = btnTransfer
+// --- event listener >> form__btn = btnTransfer
 // --- "transfer to" = form__input--to = inputTransferTo
 // --- "amount" = form__input--amount = inputTransferAmount
 
@@ -359,6 +360,10 @@ btnSort.addEventListener('click', function (e) {
   sorted = !sorted;
 });
 
+////////////////////////////////////////////////////////////////////////////
+//
+//// ------------------------------------------ not rendered on the UI
+//
 ////////////////////////////////////////////////////////////////////////////
 //
 //// --------------------------- calculate overall movements of all accounts
