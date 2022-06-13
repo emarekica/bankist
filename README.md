@@ -13,7 +13,7 @@ Minimalist online banking app, [Udemy course exercise](https://www.udemy.com/cou
 ## Mock-up
 <br><br>
 
-![bankist app mockup]("img/bankist-mockup.png)
+![bankist app mockup]("img/bankist-mockup.png")
 
 <br><br>
 
