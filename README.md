@@ -8,6 +8,20 @@ Minimalist online banking app, [Udemy course exercise](https://www.udemy.com/cou
 
 ---
 
+<br>
+
+## Technologies used
+
+<br>
+
+- HTML5
+- CSS3
+- JavaScript
+
+<br><br>
+
+---
+
 <br> 
 
 ## Mock-up
